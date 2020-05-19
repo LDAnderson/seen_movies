@@ -10,6 +10,7 @@ import unittest
 from random import randint
 from seen_movies import SeenMovie
 from client import SeenMovieClient
+from adapter import SQLAlchemyAdapter, SQLiteMemoryAdapter
 
 # Random order for tests runs. (Original is: -1 if x<y, 0 if x==y, 1 if x>y).
 unittest.TestLoader.sortTestMethodsUsing = lambda _, x, y: randint(-1, 1)
@@ -30,7 +31,9 @@ class TestName(unittest.TestCase):
 
     def setUp(self):
         """Method to prepare the test fixture. Run BEFORE the test methods."""
-        pass
+
+        self.client = SeenMovieClient("SQLite")
+        self.client.add(title="Test Movie", year=2020)
 
     def tearDown(self):
         """Method to tear down the test fixture. Run AFTER the test methods."""
@@ -50,17 +53,23 @@ class TestName(unittest.TestCase):
         """Class method called AFTER tests in an individual class run. """
         pass  # Probably you may not use this one. See tearDown().
 
+    def test_client_postgres(self):
+        client = SeenMovieClient("SQLAlchemy")
+        movies = client.seen()
+
     def test_client(self):
-        sc = SeenMovieClient()
+        c = SeenMovieClient("SQLite")
+        self.assertTrue(c.adapter.session.is_active)
 
     def test_client_get(self):
-        client = SeenMovieClient()
-        movies = client.seen()
+        movie = self.client.get("Test Movie")
+        self.assertEqual(movie.title, "Test Movie")
+
+
 
     def test_client_add(self):
-        client = SeenMovieClient()
-        client.add("Gone With the Wind", 1939)
-        movies = client.seen()
+        self.client.add(title="Gone With the Wind", year=1939, imdb='0031381', comment='Watched this movie tonight.')
+        movies = self.client.seen()
         self.assertIn(("Gone With the Wind", 1939), [(t.title, t.year) for t in movies])
 
 

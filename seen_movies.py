@@ -8,17 +8,11 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from datetime import datetime
-DB_USER = "myapp"
-DB_PASS = "dbpass"
-DB_HOST = "127.0.0.1"
-DB_PORT = 15432
-DB_NAME = "movies_seen"
-
-engine = create_engine(f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+from imdb import IMDb
 
 
-with engine.connect() as connection:
-    print(connection)
+# with engine.connect() as connection:
+#     print(connection)
     # result = connection.execute("select * from seen")
     # for row in result:
     #     print(row)
@@ -29,18 +23,27 @@ class SeenMovie(Base):
     __tablename__ = 'seenmovies'
 
     id = Column(Integer(), primary_key=True)
-    name = Column(String(200),nullable=False)
+    title = Column(String(200),nullable=False)
     year = Column(Integer())
     date_seen = Column(Date(), default=datetime.now)
     imdb = Column(String(20))
     comment = Column(Text())
 
     def __repr__(self):
-        return f"{self.name} ({self.year}) seen: {self.date_seen}"
+        return f"{self.title} ({self.year}) seen: {self.date_seen}"
 
 
-m = SeenMovie(name = "Hot Boyz", year=1999, imdb='tt0191191')
+def find_movie_id_by_title_and_year(title, year):
+    ia = IMDb()
 
-from sqlalchemy.orm import sessionmaker, Session
-Session = sessionmaker(bind=engine)
-session = Session()
+    try:
+        imdb_movie = next(x for x in ia.search_movie(title) if x.get('year') == year)
+    except StopIteration:
+        return None
+
+    return imdb_movie.movieID
+
+def get_director(imdb_id):
+    movie = ia.get_movie(imdb_id)
+
+    return movie.get('director')[0]['name']
