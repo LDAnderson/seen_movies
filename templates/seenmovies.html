@@ -4,21 +4,77 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Movies</title>
-        <link rel="s\tylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
         <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     </head>
     <body>
-        <section class="section">
+        <section class="hero is-homepage is-low">
+            <div class="hero-body is-patterned">
+                <div class="container">
+                    <h1 class="is-1 has-text-centered">Movies that I've seen</h1>
+                </div>
+                <div class="container">
+                    <div class='columns'>
+                        {% for movie in movies %}
+                        <div class='media-left'>
+                            {% if movie.imdb %}
+                            <figure class="image is48x48" title="Cover" >
+                                <img class="logo" src= {{ movie.get_thumbnail_url() }} />
+                            </figure>
+                        </div>
+                        {% endif %}
+                        <div class='media-content'>
+                            <div class='content'>
+                                <div class='column' >
+                                    <h1 class="title">
+                                        {{movie.title}} ({{movie.year}})
+                                    </h1>
+                                    <h2 class="subtitle" >
+                                        {{movie.date_seen}}
+                                    </h2>
+                                    <p class="subtitle">
+                                        {{movie.comment}}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <section id="add" class="section section-light-grey is-medium">
             <div class="container">
-                {% for movie in movies %}
-                <h1 class="title">
-                    {{movie.title}} ({{movie.year}})
-                    {{movie.date_seen}}
-                </h1>
-                <p class="subtitle">
-                    {{movie.comment}}
-                </p>
-                {% endfor %}
+                <div class="title-wrapper has-text-centered">
+                    <h2 class="title is-2 is-spaced">Watched a movie?</h2>
+                </div>
+                <div class="content-wrapper">
+                    <div class="columns">
+                        <div class="column is-6 is-offset-3">
+                            <form method="POST">
+                                {{ form.hidden_tag() }}
+                                <div class="columns is-multiline">
+                                    <div class="column is-6">
+                                        <input class="input is-medium" name="title" placeholder="Movie title">
+                                    </div>
+                                    <div class="column is-6">
+                                        <input class="input is-medium" name="year" placeholder="Year Released">
+                                    </div>
+                                    <div class="column is-6">
+                                        <input class="input is-medium" name="imdb" placeholder="IMDB">
+                                    </div>
+                                    <div class="column is-12">
+                                        <textarea class="input is-medium" rows="10" name="comment" placeholder="Comments"></textarea>
+                                    </div>
+                                    <div class="form-footer has-text-centered mt-10">
+                                        <button type="submit" class="button cta is-large primary-btn raised is-clear" value="submit">Add Movie</button>
+                                    </div>
+                                </div>
+                            </form>
+                    </div>
+                </div>
             </div>
         </section>
     </body>

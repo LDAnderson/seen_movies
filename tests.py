@@ -33,7 +33,7 @@ class TestName(unittest.TestCase):
         """Method to prepare the test fixture. Run BEFORE the test methods."""
 
         self.client = SeenMovieClient("SQLite")
-        self.client.add(title="Test Movie", year=2020)
+        self.client.add(title="Test Movie", year=2020, imdb='0123456789', comment="Comment")
 
     def tearDown(self):
         """Method to tear down the test fixture. Run AFTER the test methods."""
@@ -66,12 +66,20 @@ class TestName(unittest.TestCase):
         self.assertEqual(movie.title, "Test Movie")
 
 
-
     def test_client_add(self):
         self.client.add(title="Gone With the Wind", year=1939, imdb='0031381', comment='Watched this movie tonight.')
         movies = self.client.seen()
         self.assertIn(("Gone With the Wind", 1939), [(t.title, t.year) for t in movies])
 
+    def test_client_update(self):
+        movie = self.client.get("Test Movie")
+        self.assertEqual(movie.comment, 'Comment')
+        self.client.update(movie, year=2021, comment="New Comment")
+        self.assertEqual(movie.year, 2021)
+        self.assertEqual(movie.comment, 'New Comment')
+        with self.assertRaises(AttributeError):
+            self.client.update(movie, good=False)
+            self.assertFalse(movie.good)
 
     @unittest.skip("Demonstrating skipping")  # Skips this test only
     @unittest.skipIf("boolean_condition", "Reason to Skip Test here.")  # Skips this test only

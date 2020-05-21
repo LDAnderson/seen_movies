@@ -21,3 +21,5 @@ class SeenMovieClient():
     def get(self, title):
         return self.adapter.get(title)
 
+    def update(self, movie, **kwargs):
+        return self.adapter.update(movie, **kwargs)
