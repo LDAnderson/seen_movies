@@ -5,13 +5,21 @@ from seen_movies import SeenMovie, Base
 DB_USER = "myapp"
 DB_PASS = "dbpass"
 DB_HOST = "127.0.0.1"
-DB_PORT = 15432
+DB_PORT = "15432"
 DB_NAME = "movies_seen"
+
+def make_connection_uri(host=DB_HOST, port=DB_PORT, username=DB_USER,
+                        pw=DB_PASS, dbname=DB_NAME, database='postgres'):
+    if database == 'postgres':
+        connection_string = "postgresql+psycopg2://" + \
+        username + ':' + pw + '@' + host + ':' + port + '/' + dbname
+    else:
+        raise NotImplementedError()
+    return connection_string
 
 class SQLAlchemyAdapter():
     def __init__(self):
-        self.engine = \
-        create_engine(f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+        self.engine = create_engine(make_connection_uri())
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
 
@@ -19,6 +27,9 @@ class SQLAlchemyAdapter():
         return self.session.query(SeenMovie).all()
 
     def add(self, title=None, year=None, date_seen=None, imdb=None, comment=None):
+        if imdb.startswith('tt'):
+            imdb = imdb[2:]
+
         seen_movie = SeenMovie(
             title = title,
             year = year,
@@ -31,9 +42,12 @@ class SQLAlchemyAdapter():
     def get(self, title):
         return self.session.query(SeenMovie).filter_by(title=title).one()
 
+    def get_by_id(self, id):
+        return self.session.query(SeenMovie).filter_by(id=id).one()
+
     def update(self, movie, **kwargs):
         for attribute, value in kwargs.items():
-            if hasattr(movie, attribute):
+            if hasattr(movie, attribute) and value is not None:
                 setattr(movie, attribute, value)
         self.session.add(movie)
         self.session.commit()

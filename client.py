@@ -21,5 +21,8 @@ class SeenMovieClient():
     def get(self, title):
         return self.adapter.get(title)
 
+    def get_by_id(self, id):
+        return self.adapter.get_by_id(id)
+
     def update(self, movie, **kwargs):
         return self.adapter.update(movie, **kwargs)

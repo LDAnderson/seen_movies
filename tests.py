@@ -80,6 +80,8 @@ class TestName(unittest.TestCase):
         with self.assertRaises(AttributeError):
             self.client.update(movie, good=False)
             self.assertFalse(movie.good)
+        self.client.update(movie, comment="")
+        self.assertEqual(movie.comment, "")
 
     @unittest.skip("Demonstrating skipping")  # Skips this test only
     @unittest.skipIf("boolean_condition", "Reason to Skip Test here.")  # Skips this test only
