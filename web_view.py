@@ -4,8 +4,7 @@ from flask_wtf import FlaskForm
 from seen_movies import SeenMovie, thumbnail_exists, save_thumbnail
 from wtforms import StringField, SubmitField, IntegerField
 from wtforms.validators import DataRequired
-from client import SeenMovieClient
-from adapter import make_connection_uri
+from adapter import RemoteServerMovieClient, make_connection_uri
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = make_connection_uri()
@@ -23,8 +22,8 @@ class SeenMovieForm(FlaskForm):
 @app.route('/', methods=['GET', 'POST'])
 def showSeenMovies():
     form = SeenMovieForm()
-    client = SeenMovieClient("SQLAlchemy")
-    movies = client.seen()
+    client = RemoteServerMovieClient()
+    movies = client.get_all()
 
     if form.validate_on_submit():
         title = form.title.data
@@ -39,9 +38,9 @@ def showSeenMovies():
 
 @app.route('/edit/<int:id>', methods=['GET', 'POST'])
 def edit(id):
-    client = SeenMovieClient("SQLAlchemy")
+    client = RemoteServerMovieClient()
     movie_to_edit = client.get_by_id(id)
-    movies = client.seen()
+    movies = client.get_all()
     form = SeenMovieForm()
     if form.validate_on_submit():
         title = form.title.data

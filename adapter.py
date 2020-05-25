@@ -1,4 +1,5 @@
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import create_engine
 from seen_movies import SeenMovie, Base
 
@@ -17,13 +18,13 @@ def make_connection_uri(host=DB_HOST, port=DB_PORT, username=DB_USER,
         raise NotImplementedError()
     return connection_string
 
-class SQLAlchemyAdapter():
+class RemoteServerMovieClient():
     def __init__(self):
         self.engine = create_engine(make_connection_uri())
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
 
-    def get_movies(self):
+    def get_all(self):
         return self.session.query(SeenMovie).all()
 
     def add(self, title=None, year=None, date_seen=None, imdb=None, comment=None):
@@ -40,7 +41,10 @@ class SQLAlchemyAdapter():
         self.session.commit()
 
     def get(self, title):
-        return self.session.query(SeenMovie).filter_by(title=title).one()
+        try:
+            return self.session.query(SeenMovie).filter_by(title=title).one()
+        except NoResultFound:
+            return None
 
     def get_by_id(self, id):
         return self.session.query(SeenMovie).filter_by(id=id).one()
@@ -52,7 +56,7 @@ class SQLAlchemyAdapter():
         self.session.add(movie)
         self.session.commit()
 
-class SQLiteMemoryAdapter(SQLAlchemyAdapter):
+class LocalMovieClient(RemoteServerMovieClient):
     def __init__(self):
         self.engine = create_engine('sqlite:///:memory:')
         Base.metadata.create_all(self.engine)
