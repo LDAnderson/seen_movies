@@ -1,13 +1,14 @@
+import os
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import create_engine
 from seen_movies import SeenMovie, Base
 
-DB_USER = "myapp"
-DB_PASS = "dbpass"
-DB_HOST = "127.0.0.1"
-DB_PORT = "15432"
-DB_NAME = "movies_seen"
+DB_USER = os.environ.get('DB_USER')
+DB_PASS = os.environ.get('DB_PASS')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT')
+DB_NAME = os.environ.get('DB_NAME')
 
 def make_connection_uri(host=DB_HOST, port=DB_PORT, username=DB_USER,
                         pw=DB_PASS, dbname=DB_NAME, database='postgres'):

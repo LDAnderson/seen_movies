@@ -1,0 +1,26 @@
+            <div class="content-wrapper">
+                <div class="columns">
+                    <div class="column is-6 is-offset-3">
+                        <form method="POST">
+                            {{ form.hidden_tag() }}
+                            <div class="columns is-multiline">
+                                <div class="column is-6">
+                                    <input class="input is-medium" name="title" placeholder="Movie title">
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input is-medium" name="year" placeholder="Year Released">
+                                </div>
+                                <div class="column is-6">
+                                    <input class="input is-medium" name="imdb" placeholder="IMDB">
+                                </div>
+                                <div class="column is-12">
+                                    <textarea class="input is-medium" rows="10" name="comment" placeholder="Comments"></textarea>
+                                </div>
+                                <div class="form-footer has-text-centered mt-10">
+                                    <button type="submit" class="button cta is-large primary-btn raised is-clear" value="submit">Add Movie</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
