@@ -15,12 +15,6 @@ from datetime import datetime
 from imdb import IMDb
 
 
-# with engine.connect() as connection:
-#     print(connection)
-    # result = connection.execute("select * from seen")
-    # for row in result:
-    #     print(row)
-
 Base = declarative_base()
 
 class SeenMovie(Base):
