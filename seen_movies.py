@@ -65,16 +65,18 @@ def find_movie_id_by_title_and_year(title, year):
     return imdb_movie.movieID
 
 def get_director(imdb_id):
+    ia = IMDb()
     movie = ia.get_movie(imdb_id)
-
     return movie.get('director')[0]['name']
 
 def thumbnail_exists(name):
-    f = Path('static/' + str(name))
+    f = Path(make_path_filename(name))
     return f.is_file()
 
 def save_thumbnail(name, url):
     img = requests.get(url).content
-    with open('static/' + str(name), 'w+b') as f:
+    with open(make_path_filename(name), 'w+b') as f:
         f.write(img)
 
+def make_path_filename(name, extension=".jpg"):
+    return 'static/' + name + extension

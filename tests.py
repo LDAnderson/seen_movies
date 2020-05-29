@@ -4,7 +4,7 @@ import subprocess
 from random import randint
 
 
-from seen_movies import SeenMovie
+from seen_movies import SeenMovie, make_path_filename, thumbnail_exists, get_director
 from adapter import RemoteServerMovieClient, LocalMovieClient
 
 unittest.TestLoader.sortTestMethodsUsing = lambda _, x, y: randint(-1, 1)
@@ -52,6 +52,7 @@ class SeenMovieTests(unittest.TestCase):
         self.m1 = SeenMovie(title="Scarface", year=1932, imdb='0023427',
                        comment="Grapefruit right to the kisser")
 
+
     def test_slug(self):
         t1 = SeenMovie(title="A Long Title!", year=1932)
         self.assertEqual(t1.title,"A Long Title!")
@@ -65,6 +66,19 @@ class SeenMovieTests(unittest.TestCase):
                        comment="Grapefruit right to the kisser")
         self.assertEqual(t1.year, 1932)
         self.assertEqual(self.m1.title, "Scarface")
+
+    def test_make_path_filename(self):
+        t1 = 'test'
+        self.assertEqual(make_path_filename(t1), 'static/test.jpg')
+
+    def test_thumbnail_exists(self):
+        t1 = 'filename_which_does_not_exist'
+        self.assertFalse(thumbnail_exists(t1))
+
+    def test_get_director(self):
+        t1 = self.m1.imdb
+        self.assertEqual(get_director(t1), 'Howard Hawks')
+
 
 if __name__.__contains__("__main__"):
     unittest.main(exit=False)
