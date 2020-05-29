@@ -40,8 +40,18 @@ class SeenMovie(Base):
         return 'static/' + self.title_slug()
 
     def title_slug(self):
-        return re.sub(r"[\s\.!\[\]\(\)\'\"]", '', self.title)
-
+        if hasattr(self, 'slug'):
+            return self.slug
+        else:
+            shortened_cleaned_title = re.sub(r"[\s\.!\[\]\(\)\'\"]", '', self.title)
+            shortened_cleaned_title = shortened_cleaned_title[:50]
+            shortened_cleaned_title = shortened_cleaned_title.lower()
+            if len(shortened_cleaned_title) < 1:
+                ascii_slug =  "".join([str(ord(c)) for c in self.title])[:50]
+                self.slug = ascii_slug
+            else:
+                self.slug = shortened_cleaned_title
+            return self.slug
 
 
 def find_movie_id_by_title_and_year(title, year):
