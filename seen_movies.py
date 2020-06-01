@@ -37,7 +37,7 @@ class SeenMovie(Base):
             thumbnail_url = movie.get('cover url')
             save_thumbnail(self.title_slug(), thumbnail_url)
 
-        return 'static/' + self.title_slug()
+        return make_path_filename(self.title_slug())
 
     def title_slug(self):
         if hasattr(self, 'slug'):
@@ -53,6 +53,11 @@ class SeenMovie(Base):
                 self.slug = shortened_cleaned_title
             return self.slug
 
+def find_movie_id_by_title(title):
+    ia = IMDb()
+    movies = ia.search_movie(title, results=50)
+    movies = filter(lambda x: x.get('kind') == 'movie', movies)
+    return list(movies)
 
 def find_movie_id_by_title_and_year(title, year):
     ia = IMDb()
@@ -80,3 +85,4 @@ def save_thumbnail(name, url):
 
 def make_path_filename(name, extension=".jpg"):
     return 'static/' + name + extension
+

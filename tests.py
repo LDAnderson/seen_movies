@@ -51,6 +51,7 @@ class SeenMovieTests(unittest.TestCase):
     def setUp(self):
         self.m1 = SeenMovie(title="Scarface", year=1932, imdb='0023427',
                        comment="Grapefruit right to the kisser")
+        self.m2 = SeenMovie(title="Scarface", year=1983)
 
 
     def test_slug(self):
@@ -77,7 +78,9 @@ class SeenMovieTests(unittest.TestCase):
 
     def test_get_director(self):
         t1 = self.m1.imdb
+        t2 = self.m2.imdb
         self.assertEqual(get_director(t1), 'Howard Hawks')
+        self.assertRaises(TypeError, get_director, t2)
 
 
 if __name__.__contains__("__main__"):
