@@ -53,6 +53,10 @@ class SeenMovie(Base):
                 self.slug = shortened_cleaned_title
             return self.slug
 
+    @staticmethod
+    def init_db(engine):
+        Base.metadata.create_all(engine)
+
 def find_movie_id_by_title(title):
     ia = IMDb()
     movies = ia.search_movie(title, results=50)

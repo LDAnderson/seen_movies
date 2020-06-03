@@ -24,6 +24,8 @@ class RemoteServerMovieClient():
         self.engine = create_engine(make_connection_uri())
         self.Session = sessionmaker(bind=self.engine)
         self.session = self.Session()
+        if not self.engine.dialect.has_table(self.engine, 'seenmovies'):
+            SeenMovie.init_db(self.engine)
 
     def get_all(self):
         return self.session.query(SeenMovie).all()
